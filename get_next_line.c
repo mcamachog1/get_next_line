@@ -54,36 +54,25 @@ int	main(void)
 	int	bytes_read;
 
 	buffer = malloc(BUFFER_SIZE);
-	clear_buffer(buffer);
+	line = 0;
 	fd = open("file.txt", O_RDONLY);
 	bytes_read = read(fd, (void *)buffer, BUFFER_SIZE);
-	if (bytes_read < BUFFER_SIZE)
-		truncate_buffer(buffer, bytes_read);
-	line = line_maker(buffer, 0, BUFFER_SIZE);
-	printf("BUFFER_SIZE:%d\nBYTES_READ:%d\n", BUFFER_SIZE, bytes_read);
-	printf("**** buffer *****\n");
-	printf("%s\n", buffer);
-	printf("**** line   *****\n");
-	printf("%s\n", line);
-	//clear_buffer(buffer);
-	bytes_read=read(fd, (void *)buffer, BUFFER_SIZE);
-	if (bytes_read < BUFFER_SIZE)
-		truncate_buffer(buffer, bytes_read);
-	line = line_maker(buffer, line, BUFFER_SIZE);
-	printf("BUFFER_SIZE:%d\nBYTES_READ:%d\n", BUFFER_SIZE, bytes_read);
-	printf("**** buffer *****\n");
-	printf("%s\n", buffer);
-	printf("**** line   *****\n");
-	printf("%s\n", line);
-	//clear_buffer(buffer);
-	bytes_read=read(fd, (void *)buffer, BUFFER_SIZE);
-	line = line_maker(buffer, line, BUFFER_SIZE);
-	printf("BUFFER_SIZE:%d\nBYTES_READ:%d\n", BUFFER_SIZE, bytes_read);
-	printf("**** buffer *****\n");
-	printf("%s\n", buffer);
-	printf("**** line   *****\n");
-	printf("%s\n", line);
-	printf("free(%p)\n", buffer);
+	while (bytes_read > 0)
+	{
+		if (bytes_read < BUFFER_SIZE)
+			truncate_buffer(buffer, bytes_read);
+		line = line_maker(buffer, line, BUFFER_SIZE);
+		printf("BUFFER_SIZE:%d\nBYTES_READ:%d\n", BUFFER_SIZE, bytes_read);
+		printf("**** buffer *****\n");
+		printf("%s\n", buffer);
+		printf("**** line   *****\n");
+		printf("%s\n", line);
+		bytes_read=read(fd, (void *)buffer, BUFFER_SIZE);
+	}
+	if (bytes_read == 0)
+		truncate_buffer(buffer, 0);
+	if (bytes_read == -1)
+		printf("Error\n");
 	free(buffer);
 	return (0);
 }
