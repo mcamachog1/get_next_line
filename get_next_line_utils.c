@@ -54,7 +54,7 @@ void truncate_buffer(char *buffer, int size)
 	buffer[size - 1] = '\0';
 }
 
-int	find_nl_index(const char *buffer)
+int	find_nl_index(char *buffer)
 {
 	int	i;
 

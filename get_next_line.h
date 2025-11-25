@@ -14,6 +14,6 @@ typedef	struct	s_line
 char	*get_next_line(int fd);
 char	*line_maker(const char *buffer, char *line, int size);
 void	truncate_buffer(char *buffer, int size);
-int	find_nl_index(const char *buffer);
+int	find_nl_index(char *buffer);
 
 #endif
