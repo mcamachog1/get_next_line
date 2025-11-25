@@ -1,42 +1,21 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   get_next_line.c                                    :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: macamach <mcamach@student.42porto.com      +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/11/24 15:48:23 by macamach          #+#    #+#             */
+/*   Updated: 2025/11/24 15:48:43 by macamach         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include <stdio.h>
 #include <string.h>
 #include <fcntl.h>
-#include <stdlib.h>
 #include <unistd.h>
+#include <stdlib.h>
 #include "get_next_line.h"
-
-char *line_maker(const char *buffer, char *line, int size)
-{
-	static int	buffer_size;
-	char	*new_line;
-	int	i;
-	int	j;
-
-	buffer_size += size;
-	i = 0;
-	new_line = malloc(buffer_size);
-	if (line != 0)
-	{
-		while (line[i])
-		{
-			new_line[i] = line[i];
-			i++;
-		}
-		free(line);
-	}
-	j = 0;
-	while (buffer[j] && j < BUFFER_SIZE)
-	{
-		new_line[i + j] = buffer[j];
-		j++;
-	}
-	return new_line;
-}
-
-static void truncate_buffer(char *buffer, int size)
-{
-	buffer[size - 1] = '\0';
-}
 
 int	main(void)
 {
@@ -44,6 +23,7 @@ int	main(void)
 	char	*buffer;
 	char	*line;
 	int	bytes_read;
+
 
 	buffer = malloc(BUFFER_SIZE);
 	fd = open("file.txt", O_RDONLY);
