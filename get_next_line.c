@@ -36,11 +36,12 @@ char	*get_next_line(int fd)
 	if (ft_strlen(next_line) == 0)
 	{	
 		bytes_read = read(fd, buffer, BUFFER_SIZE);
+		printf("BB: %d\n", bytes_read);
+		if (bytes_read == 0)
+			return (NULL);
 		nbytes += bytes_read;
 		while (bytes_read > 0)
 		{
-			//if (bytes_read < BUFFER_SIZE)
-			//	truncate_buffer(buffer, bytes_read);
 			index_nl = find_nl_index(buffer);
 			if (index_nl > 0)
 			{
@@ -72,6 +73,10 @@ char	*get_next_line(int fd)
 				}
 				index_l += bytes_read;
 				bytes_read = read(fd, buffer, BUFFER_SIZE);
+				printf("BB: %d\n", bytes_read);
+				if (bytes_read == 0)
+					return (NULL);
+				
 			}
 		}
 	}
@@ -82,7 +87,17 @@ char	*get_next_line(int fd)
 			current_line[index_l] = next_line[index_l];
 			index_l++;
 		}
+		j = 0;
+		while (j < BUFFER_STATIC_SIZE)
+		{
+			next_line[j] = '\0';
+			j++;
+		}
+		printf("XX;%d\n", ft_strlen(next_line));
 		bytes_read = read(fd, buffer, BUFFER_SIZE);
+		printf("BB: %d\n", bytes_read);
+		if (bytes_read == 0)
+			return (NULL);
 		while (bytes_read > 0)
 		{
 			index_nl = find_nl_index(buffer);
@@ -116,6 +131,9 @@ char	*get_next_line(int fd)
 				}
 				index_l += bytes_read;
 				bytes_read = read(fd, buffer, BUFFER_SIZE);
+				printf("BB: %d\n", bytes_read);
+				if (bytes_read == 0)
+					return (NULL);
 			}
 		}
 	}
