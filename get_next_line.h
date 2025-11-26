@@ -2,6 +2,10 @@
 # define BUFFER_SIZE 80
 #endif
 
+#ifndef BUFFER_STATIC_SIZE
+# define BUFFER_STATIC_SIZE 1024
+#endif
+
 #ifndef GET_NEXT_LINE_H
 # define GET_NEXT_LINE_H
 
@@ -15,5 +19,6 @@ char	*get_next_line(int fd);
 char	*line_maker(const char *buffer, char *line, int size);
 void	truncate_buffer(char *buffer, int size);
 int	find_nl_index(char *buffer);
+int	ft_strlen(const char *str);
 
 #endif
