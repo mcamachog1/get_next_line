@@ -5,8 +5,10 @@ OBJS = $(SOURCES:.c=.o)
 FLAGS = -Wall -Werror -Wextra
 
 compile: $(OBJS)
-		cc $(FLAGS) -D BUFFER_SIZE=10 $(SOURCES) -o test
+		cc $(FLAGS) -D BUFFER_SIZE=3 $(SOURCES) -o test
 
+debug: $(OBJS)
+		cc -g $(FLAGS) -D BUFFER_SIZE=3 $(SOURCES) -o test
 clean:
 		rm $(OBJS)
 

@@ -14,7 +14,23 @@
 #include <string.h>
 #include <stdio.h>
 #include <unistd.h>
+#include <limits.h>
 #include "get_next_line.h"
+
+void	*ft_calloc(size_t nmemb, size_t size)
+{
+	void	*pointer;
+
+	if (nmemb == 0 || size == 0)
+		return (malloc(0));
+	if (nmemb > INT_MAX / size)
+		return (NULL);
+	pointer = malloc(nmemb * size);
+	if (pointer == NULL)
+		return (NULL);
+	ft_memset(pointer, 0, nmemb * size);
+	return (pointer);
+}
 
 void	*ft_memset(void *s, int c, size_t n)
 {
@@ -78,7 +94,7 @@ void	utils_next_line(char *buffer, char *next, int bytes_read)
 	while(buffer[i] != '\n' && i < bytes_read)
 		i++;
 	j = 0;
-	while(j < bytes_read - i)
+	while(j < bytes_read - (i + 1))
 	{
 		next[j] = buffer[j + i];
 		j++;

@@ -26,5 +26,6 @@ void	utils_next_line(char *buffer, char *next, int bytes_read);
 void	utils_save_line(char *buffer, char *current, int bytes_read, int *index);
 void	utils_next_to_current(char *current, char *next, int *index);
 void	*ft_memset(void *s, int c, size_t n);
+void	*ft_calloc(size_t nmemb, size_t size);
 
 #endif
