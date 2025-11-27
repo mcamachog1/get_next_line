@@ -6,14 +6,25 @@
 /*   By: macamach <mcamach@student.42porto.com      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/24 15:48:53 by macamach          #+#    #+#             */
-/*   Updated: 2025/11/24 15:49:02 by macamach         ###   ########.fr       */
+/*   Updated: 2025/11/27 09:47:26 by macamach         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
+#include <unistd.h>
 #include "get_next_line.h"
+
+int	utils_read(int fd, char *buffer, int *bytes_read)
+{
+
+	*bytes_read = read(fd, buffer, BUFFER_SIZE);
+	if (*bytes_read == 0 || *bytes_read == -1)
+		return (0);
+	else
+		return (1);
+}
 
 char *line_maker(const char *buffer, char *line, int size)
 {

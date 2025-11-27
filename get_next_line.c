@@ -6,7 +6,7 @@
 /*   By: macamach <mcamach@student.42porto.com      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/24 15:48:23 by macamach          #+#    #+#             */
-/*   Updated: 2025/11/24 15:48:43 by macamach         ###   ########.fr       */
+/*   Updated: 2025/11/27 09:49:46 by macamach         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,10 +34,8 @@ char	*get_next_line(int fd)
 	nbytes = 0;
 	index_l = 0;
 	if (ft_strlen(next_line) == 0)
-	{	
-		bytes_read = read(fd, buffer, BUFFER_SIZE);
-		printf("BB: %d\n", bytes_read);
-		if (bytes_read == 0)
+	{
+		if (!utils_read(fd, buffer, &bytes_read))
 			return (NULL);
 		nbytes += bytes_read;
 		while (bytes_read > 0)
@@ -72,9 +70,7 @@ char	*get_next_line(int fd)
 					j++;
 				}
 				index_l += bytes_read;
-				bytes_read = read(fd, buffer, BUFFER_SIZE);
-				printf("BB: %d\n", bytes_read);
-				if (bytes_read == 0)
+				if (!utils_read(fd, buffer, &bytes_read))
 					return (NULL);
 				
 			}
@@ -93,10 +89,7 @@ char	*get_next_line(int fd)
 			next_line[j] = '\0';
 			j++;
 		}
-		printf("XX;%d\n", ft_strlen(next_line));
-		bytes_read = read(fd, buffer, BUFFER_SIZE);
-		printf("BB: %d\n", bytes_read);
-		if (bytes_read == 0)
+		if (!utils_read(fd, buffer, &bytes_read))
 			return (NULL);
 		while (bytes_read > 0)
 		{

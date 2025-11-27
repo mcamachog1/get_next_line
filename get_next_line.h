@@ -20,5 +20,6 @@ char	*line_maker(const char *buffer, char *line, int size);
 void	truncate_buffer(char *buffer, int size);
 int	find_nl_index(char *buffer);
 int	ft_strlen(const char *str);
+int	utils_read(int fd, char *buffer, int *bytes_read);
 
 #endif
