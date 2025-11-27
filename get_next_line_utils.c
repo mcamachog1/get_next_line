@@ -6,7 +6,7 @@
 /*   By: macamach <mcamach@student.42porto.com      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/24 15:48:53 by macamach          #+#    #+#             */
-/*   Updated: 2025/11/27 12:32:24 by macamach         ###   ########.fr       */
+/*   Updated: 2025/11/27 17:35:59 by macamach         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -141,6 +141,8 @@ char *line_maker(const char *buffer, char *line, int size)
 	buffer_size += size;
 	i = 0;
 	new_line = malloc(buffer_size);
+	if (!new_line)
+		return (free(new_line), NULL);	
 	if (line != 0)
 	{
 		while (line[i])

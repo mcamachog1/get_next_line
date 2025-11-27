@@ -6,7 +6,7 @@
 /*   By: macamach <mcamach@student.42porto.com      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/24 15:48:23 by macamach          #+#    #+#             */
-/*   Updated: 2025/11/27 13:34:48 by macamach         ###   ########.fr       */
+/*   Updated: 2025/11/27 17:33:34 by macamach         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,7 @@ char *get_next_line(int fd)
 
 	utils_next_to_current(current_line, next_line, &index_l);
 	if (!utils_read(fd, buffer, &bytes_read))
-		return (NULL);
+		return (free(buffer), NULL);
 	while (bytes_read > 0)
 	{
 		if (find_nl_index(buffer) > 0)
@@ -44,7 +44,7 @@ char *get_next_line(int fd)
 		{
 			utils_save_line(buffer, current_line, bytes_read, &index_l);
 			if (!utils_read(fd, buffer, &bytes_read))
-				return (NULL);
+				return (free(buffer), NULL);
 		}
 	}
 
@@ -58,6 +58,7 @@ int main(void)
 	char *line;
 	int count;
 
+	count = 0;
 	fd = open("file.txt", O_RDONLY);
 	while (1)
 	{
