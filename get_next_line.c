@@ -6,7 +6,7 @@
 /*   By: macamach <mcamach@student.42porto.com      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/24 15:48:23 by macamach          #+#    #+#             */
-/*   Updated: 2025/11/27 09:49:46 by macamach         ###   ########.fr       */
+/*   Updated: 2025/11/27 13:34:48 by macamach         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,112 +20,51 @@
 char	*get_next_line(int fd)
 {
 	static char	next_line[BUFFER_STATIC_SIZE];
-	char	*current_line;
-	char	*buffer;
-	int	bytes_read;
-	int	nbytes;
-	int	i;
-	int	j;
-	int	index_nl;
-	int	index_l;
+	char		*current_line;
+	char		*buffer;
+	int			bytes_read;
+	int			index_l;
 
 	buffer = malloc(BUFFER_SIZE);
 	current_line = malloc(BUFFER_STATIC_SIZE);
-	nbytes = 0;
 	index_l = 0;
 	if (ft_strlen(next_line) == 0)
 	{
 		if (!utils_read(fd, buffer, &bytes_read))
 			return (NULL);
-		nbytes += bytes_read;
 		while (bytes_read > 0)
 		{
-			index_nl = find_nl_index(buffer);
-			if (index_nl > 0)
+			if (find_nl_index(buffer) > 0)
 			{
-				i = 0;
-				while (buffer[i] != '\n')
-				{
-					current_line[index_l] = buffer[i];
-					index_l++;
-					i++;
-				}
-				current_line[index_l] = '\n';
-				index_l++;
-				j = 0;
-				while (j < bytes_read - i)
-				{
-					next_line[j] = buffer[j + i]; 
-					j++;
-				}
-				next_line[j] = '\0';
-				break;
+				utils_make_line(buffer, current_line, &index_l);
+				utils_next_line(buffer, next_line, bytes_read);
+				break ;
 			}
 			else
-			{	
-				j = 0;
-				while (j < bytes_read)
-				{
-					current_line[j + index_l] = buffer[j];
-					j++;
-				}
-				index_l += bytes_read;
+			{
+				utils_save_line(buffer, current_line, bytes_read, &index_l);
 				if (!utils_read(fd, buffer, &bytes_read))
 					return (NULL);
-				
 			}
 		}
 	}
 	else
 	{
-		while (next_line[index_l])
-		{
-			current_line[index_l] = next_line[index_l];
-			index_l++;
-		}
-		j = 0;
-		while (j < BUFFER_STATIC_SIZE)
-		{
-			next_line[j] = '\0';
-			j++;
-		}
+		utils_next_to_current(current_line, next_line, &index_l);
 		if (!utils_read(fd, buffer, &bytes_read))
 			return (NULL);
 		while (bytes_read > 0)
-		{
-			index_nl = find_nl_index(buffer);
-			if (index_nl > 0)
 			{
-				i = 0;
-				while (buffer[i] != '\n')
-				{
-					current_line[index_l] = buffer[i];
-					index_l++;
-					i++;
-				}
-				current_line[index_l] = '\n';
-				index_l++;
-				j = 0;
-				while (j < bytes_read - i)
-				{
-					next_line[j] = buffer[j + i]; 
-					j++;
-				}
-				next_line[j] = '\0';
-				break;
+			if (find_nl_index(buffer) > 0)
+			{
+				utils_make_line(buffer, current_line, &index_l);
+				utils_next_line(buffer, next_line, bytes_read);
+				break ;
 			}
 			else
-			{	
-				j = 0;
-				while (j < bytes_read)
-				{
-					current_line[j + index_l] = buffer[j];
-					j++;
-				}
-				index_l += bytes_read;
-				bytes_read = read(fd, buffer, BUFFER_SIZE);
-				printf("BB: %d\n", bytes_read);
-				if (bytes_read == 0)
+			{
+				utils_save_line(buffer, current_line, bytes_read, &index_l);
+				if (!utils_read(fd, buffer, &bytes_read))
 					return (NULL);
 			}
 		}

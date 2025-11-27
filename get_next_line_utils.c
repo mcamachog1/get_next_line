@@ -6,7 +6,7 @@
 /*   By: macamach <mcamach@student.42porto.com      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/24 15:48:53 by macamach          #+#    #+#             */
-/*   Updated: 2025/11/27 09:47:26 by macamach         ###   ########.fr       */
+/*   Updated: 2025/11/27 12:32:24 by macamach         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,21 @@
 #include <stdio.h>
 #include <unistd.h>
 #include "get_next_line.h"
+
+void	*ft_memset(void *s, int c, size_t n)
+{
+	size_t			i;
+	unsigned char	*new_pointer;
+
+	new_pointer = (unsigned char *)s;
+	i = 0;
+	while (i < n)
+	{
+		new_pointer[i] = c;
+		i++;
+	}
+	return (s);
+}
 
 int	utils_read(int fd, char *buffer, int *bytes_read)
 {
@@ -25,6 +40,80 @@ int	utils_read(int fd, char *buffer, int *bytes_read)
 	else
 		return (1);
 }
+
+void	utils_make_line(char *buffer, char *current, int *index)
+{
+	int	i;
+
+	i = 0;
+	while (buffer[i] != '\n')
+	{
+		current[*index] = buffer[i];
+		(*index)++;
+		i++;
+	}
+	current[*index] = '\n';
+	(*index)++;
+}
+
+void	utils_save_line(char *buffer, char *current, int bytes_read, int *index)
+{
+	int	j;
+
+	j = 0;
+	while (j < bytes_read)
+	{
+		current[j + *index] = buffer[j];
+		j++;
+	}
+	*index += bytes_read;
+}
+
+void	utils_next_line(char *buffer, char *next, int bytes_read)
+{
+	int	i;
+	int	j;
+
+	i = 0;
+	while(buffer[i] != '\n' && i < bytes_read)
+		i++;
+	j = 0;
+	while(j < bytes_read - i)
+	{
+		next[j] = buffer[j + i];
+		j++;
+	}
+	next[j] = '\0';
+}
+
+void	utils_next_to_current(char *current, char *next, int *index)
+{
+	while(next[*index])
+	{
+		current[*index] = next[*index];
+		(*index)++;
+	}
+	ft_memset(next, 0, BUFFER_STATIC_SIZE);
+}
+/*
+void	utils_split_buffer(int *bytes_read, char *current, char *next, int *index)
+{
+	while (*bytes_read > 0)
+	{
+		if (find_nl_index(buffer) > 0)
+		{
+			utils_make_line(buffer, current, index);
+			utils_next_line(buffer, next, *bytes_read);
+			break ;
+		}
+		else
+		{
+			utils_save_line(buffer, current, *bytes_read, index);
+			if (!utils_read(fd, buffer, bytes_read))
+				return (NULL);
+		}
+	}
+}*/		
 
 char *line_maker(const char *buffer, char *line, int size)
 {
