@@ -17,6 +17,46 @@
 #include <limits.h>
 #include "get_next_line.h"
 
+char	*ft_strchr(const char *s, int c)
+{
+	size_t	i;
+
+	if ((unsigned char)c == '\0')
+		return ((char *)&s[ft_strlen(s)]);
+	i = 0;
+	while (s[i] != '\0')
+	{
+		if (s[i] == (unsigned char)c)
+			return ((char *)&s[i]);
+		i++;
+	}
+	return (NULL);
+}
+
+size_t	ft_strlcat(char *dst, const char *src, size_t size)
+{
+	size_t	i;
+	size_t	max;
+	size_t	init_len_dst;
+
+	if (!dst && !src)
+		return (0);
+	if (size == 0)
+		return (ft_strlen(src));
+	init_len_dst = ft_strlen(dst);
+	if (size < init_len_dst + 1)
+		return (size + ft_strlen(src));
+	i = 0;
+	max = size - (init_len_dst + 1);
+	while (i < max && src[i])
+	{
+		dst[init_len_dst + i] = src[i];
+		i++;
+	}
+	dst[init_len_dst + i] = '\0';
+	return (init_len_dst + ft_strlen(src));
+}
+
 void	*ft_calloc(size_t nmemb, size_t size)
 {
 	void	*pointer;
@@ -49,43 +89,61 @@ void	*ft_memset(void *s, int c, size_t n)
 
 int	utils_read(int fd, char *buffer, int *bytes_read)
 {
-
 	*bytes_read = read(fd, buffer, BUFFER_SIZE);
-	if (*bytes_read == 0 || *bytes_read == -1)
+	if (*bytes_read <= 0)
 		return (0);
 	else
+	{
+		buffer[BUFFER_SIZE] = '\0';
 		return (1);
-}
-
-void	utils_make_line(char *buffer, char *current, int *index)
-{
-	int	i;
-
-	i = 0;
-	while (buffer[i] != '\n')
-	{
-		current[*index] = buffer[i];
-		(*index)++;
-		i++;
 	}
-	current[*index] = '\n';
-	(*index)++;
 }
 
-void	utils_save_line(char *buffer, char *current, int bytes_read, int *index)
+char	*utils_make_line(char *buffer, char *current)
 {
-	int	j;
+	size_t	sb;
+	size_t	sc;
+	size_t	size;
+	char	*line;
 
-	j = 0;
-	while (j < bytes_read)
-	{
-		current[j + *index] = buffer[j];
-		j++;
-	}
-	*index += bytes_read;
+	sb = 0;
+	sc = ft_strlen(current);
+	while (buffer[sb] != '\n')
+		sb++;
+	size = sb + sc;
+	line = (char *)ft_calloc(size + 1, sizeof(char));
+	if (!line)
+		return (NULL);
+	if (ft_strlcat(line, current, sc + 1) >= sizeof(line))
+		return (free(line), NULL);
+	if (ft_strlcat(line, buffer, sb + 1) >= sizeof(line))
+		return (free(line), NULL);
+	line[size] = '\0';
+	free(current);
+	return (line);
 }
 
-void	utils_next_line(char *buffer, char *next, int bytes_read)
+char	*utils_save_line(char *buffer, char *current, int bytes_read)
+{
+	size_t	sc;
+	size_t	size;
+	char	*line;
+
+	sc = ft_strlen(current);
+	size = bytes_read + sc;
+	line = (char *)ft_calloc(size + 1, sizeof(char));
+	if (!line)
+		return (NULL);
+	if (ft_strlcat(line, current, sc + 1) >= sizeof(line))
+		return (free(line), NULL);
+	if (ft_strlcat(line, buffer, bytes_read + 1) >= sizeof(line))
+		return (free(line), NULL);
+	line[size] = '\0';
+	free(current);
+	return (line);
+}
+
+void	utils_make_tail(char *buffer, char *next, int bytes_read)
 {
 	int	i;
 	int	j;
@@ -102,109 +160,29 @@ void	utils_next_line(char *buffer, char *next, int bytes_read)
 	next[j] = '\0';
 }
 
-void	utils_next_to_current(char *current, char *next, int *index)
-{
-	while(next[*index])
-	{
-		current[*index] = next[*index];
-		(*index)++;
-	}
-	ft_memset(next, 0, BUFFER_STATIC_SIZE);
-}
-/*
-void	utils_split_buffer(int *bytes_read, char *current, char *next, int *index)
-{
-	while (*bytes_read > 0)
-	{
-		if (find_nl_index(buffer) > 0)
-		{
-			utils_make_line(buffer, current, index);
-			utils_next_line(buffer, next, *bytes_read);
-			break ;
-		}
-		else
-		{
-			utils_save_line(buffer, current, *bytes_read, index);
-			if (!utils_read(fd, buffer, bytes_read))
-				return (NULL);
-		}
-	}
-}*/		
-
-char *line_maker(const char *buffer, char *line, int size)
-{
-	static int	buffer_size;
-	char	*new_line;
-	int	i;
-	int	j;
-
-	buffer_size += size;
-	i = 0;
-	new_line = malloc(buffer_size);
-	if (!new_line)
-		return (free(new_line), NULL);	
-	if (line != 0)
-	{
-		while (line[i])
-		{
-			new_line[i] = line[i];
-			i++;
-		}
-		free(line);
-	}
-	j = 0;
-	while (buffer[j] && j < BUFFER_SIZE && buffer[j] != '\n')
-	{
-		new_line[i + j] = buffer[j];
-		j++;
-	}
-	j--;
-	printf("\nUNA LINEA\n");
-	printf("%s\n", new_line);
-	if (buffer[j] == '\n')
-		return new_line;
-	else
-		return(strdup("La linea continua"));
-}
-
-void truncate_buffer(char *buffer, int size)
-{
-	buffer[size - 1] = '\0';
-}
-
-int	find_nl_index(char *buffer)
+void	utils_get_tail(char *current, char *tail)
 {
 	int	i;
+	int	last;
 
+	last = ft_strlen(current) - 1;
 	i = 0;
-	while (buffer[i] && buffer[i] != '\n')
+	while(tail[i])
+	{
+		current[i + last] = tail[i];
 		i++;
-	if (buffer[i] == '\0')
-		return (-1);
-	return (i);
+	}
+	current[i + last] = '\0';	
 }
+
 int	ft_strlen(const char *str)
 {
 	int	i;
 
 	i = 0;
+	if (!str)
+		return (0);
 	while(str[i])
 		i++;
 	return (i);
-}
-
-size_t	ft_strlcpy(char *dst, const char *src, size_t size)
-{
-	size_t	i;
-
-	if (size == 0)
-		return (ft_strlen(src));
-	i = 0;
-	while (i < size - 1 && src[i])
-	{
-		dst[i] = src[i];
-		i++;
-	}
-	dst[i] = '\0';
-	return (ft_strlen(src));
 }
