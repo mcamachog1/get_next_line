@@ -6,7 +6,7 @@
 /*   By: macamach <mcamach@student.42porto.com      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/24 15:48:53 by macamach          #+#    #+#             */
-/*   Updated: 2025/11/27 17:35:59 by macamach         ###   ########.fr       */
+/*   Updated: 2025/12/02 16:29:33 by macamach         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,10 +17,24 @@
 #include <limits.h>
 #include "get_next_line.h"
 
+int	ft_strlen(const char *str)
+{
+	int	i;
+
+	i = 0;
+	if (!str)
+		return (0);
+	while(str[i])
+		i++;
+	return (i);
+}
+
 char	*ft_strchr(const char *s, int c)
 {
 	size_t	i;
 
+	if (!s)
+		return (NULL);
 	if ((unsigned char)c == '\0')
 		return ((char *)&s[ft_strlen(s)]);
 	i = 0;
@@ -59,7 +73,8 @@ size_t	ft_strlcat(char *dst, const char *src, size_t size)
 
 void	*ft_calloc(size_t nmemb, size_t size)
 {
-	void	*pointer;
+	unsigned char	*pointer;
+	unsigned long	i;
 
 	if (nmemb == 0 || size == 0)
 		return (malloc(0));
@@ -68,23 +83,13 @@ void	*ft_calloc(size_t nmemb, size_t size)
 	pointer = malloc(nmemb * size);
 	if (pointer == NULL)
 		return (NULL);
-	ft_memset(pointer, 0, nmemb * size);
-	return (pointer);
-}
-
-void	*ft_memset(void *s, int c, size_t n)
-{
-	size_t			i;
-	unsigned char	*new_pointer;
-
-	new_pointer = (unsigned char *)s;
 	i = 0;
-	while (i < n)
+	while (i < nmemb * size)
 	{
-		new_pointer[i] = c;
+		pointer[i] = 0;
 		i++;
 	}
-	return (s);
+	return (pointer);
 }
 
 int	utils_read(int fd, char *buffer, int *bytes_read)
@@ -114,85 +119,80 @@ char	*utils_make_line(char *buffer, char *current)
 	line = (char *)ft_calloc(size + 1, sizeof(char));
 	if (!line)
 		return (NULL);
-	if (ft_strlcat(line, current, sc + 1) >= sizeof(line))
-		return (free(line), NULL);
-	if (ft_strlcat(line, buffer, size + 1) >= sizeof(line))
-		return (free(line), NULL);
+	ft_strlcat(line, current, sc + 1);
+	ft_strlcat(line, buffer, size + 1); 
 	free(current);
 	return (line);
 }
 
-char	*utils_save_line(char *current, char *buffer, int bytes_read)
+char	*utils_save_line(char *buffer, char *current, int bytes_read)
 {
 	size_t	sc;
 	size_t	size;
 	char	*line;
 
 	sc = ft_strlen(current);
-	size = bytes_read + sc;
+	size = bytes_read + sc + 1;
 	line = (char *)ft_calloc(size + 1, sizeof(char));
 	if (!line)
 		return (NULL);
-	if (ft_strlcat(line, current, sc + 1) >= sizeof(line))
-		return (free(line), NULL);
-	if (ft_strlcat(line, buffer, bytes_read + 1) >= sizeof(line))
-		return (free(line), NULL);
-	line[size] = '\0';
+	ft_strlcat(line, current, sc + 1);
+	ft_strlcat(line, buffer, size);
 	free(current);
 	return (line);
 }
 
-char	*utils_make_tail(char *buffer, char *tail)
-{
-	size_t	sb;
-	size_t	st;
-	size_t	size;
-	char	*line;
-	char	*temp;
-
-	temp = ft_strchr(buffer, BREAK_LINE);
-	temp++;
-	sb = ft_strlen(temp);
-	st = ft_strlen(tail);
-	size = sb + st;
-	line = (char *)ft_calloc(size + 1, sizeof(char));
-	if (!line)
-		return (NULL);
-	if (ft_strlcat(line, tail, st + 1) >= sizeof(line))
-		return (free(line), NULL);
-	if (ft_strlcat(line, temp, size + 1) >= sizeof(line))
-		return (free(line), NULL);
-	free(tail);
-	return (line);
-}
-
-void	utils_get_tail(char *current, char *tail)
+char	*utils_make_tail(char *buffer, int bytes_read)
 {
 	int	i;
-	int	last;
+	int	j;
+	char	*tail;
 
+	i = 0;
+	while(buffer[i] != '\n' && i < bytes_read)
+		i++;
+	tail = (char *)ft_calloc(bytes_read - (i + 1) + 1, sizeof(char));
+	if(!tail)
+		return(NULL);
+	j = 0;
+	i++;
+	while(j < bytes_read - i )
+	{
+		tail[j] = buffer[j + i];
+		j++;
+	}
+	tail[j] = '\0';
+	return (tail);
+}
+
+char	*utils_get_tail(char *current, char *tail)
+{
+	int	i;
+	int	j;
+	int	last;
+	char	*new_tail;
+
+	new_tail = (char *)ft_calloc(ft_strlen(tail) + 1, sizeof(char));
 	last = 0;
-	if(ft_strlen(current)>0)
+	if (ft_strlen(current) > 0)
 		last = ft_strlen(current) - 1;
 	i = 0;
-	while(tail[i])
+	while(tail[i] && tail[i] != BREAK_LINE)
 	{
 		current[i + last] = tail[i];
 		i++;
 	}
-	current[i + last] = '\0';
+	current[i + last] = tail[i];
+	current[i + last + 1] = '\0';
+	j = 0;
+	i++;
+	while(tail[i + j])
+	{
+		new_tail[j] = tail[j + i];
+		j++; 
+	}
+	new_tail[j] = '\0';
 	free(tail);
-	tail = NULL;
+	return (new_tail);
 }
 
-int	ft_strlen(const char *str)
-{
-	int	i;
-
-	i = 0;
-	if (!str)
-		return (0);
-	while(str[i])
-		i++;
-	return (i);
-}

@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   get_tail.c                                    :+:      :+:    :+:   */
+/*   get_next_line.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: macamach <mcamach@student.42porto.com      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/24 15:48:23 by macamach          #+#    #+#             */
-/*   Updated: 2025/11/27 17:33:34 by macamach         ###   ########.fr       */
+/*   Updated: 2025/12/02 14:00:29 by macamach         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,28 +26,27 @@ char *get_next_line(int fd)
 
 	bytes_read = 0;
 	buffer = (char *)ft_calloc(BUFFER_SIZE + 1, sizeof(char));
+	current_line = NULL;
 	if (ft_strlen(tail) != 0)
 	{
 		current_line = (char *)ft_calloc(ft_strlen(tail) + 1, sizeof(char));
-		utils_get_tail(current_line, tail);
+		tail = utils_get_tail(current_line, tail);
 	}
-	else
-	{
-		current_line = NULL;
-		tail = NULL;	
-	}
-	if (!utils_read(fd, buffer, &bytes_read))
+	if (!utils_read(fd, buffer, &bytes_read) && !current_line)
 		return (free(buffer), NULL);
-	while (bytes_read > 0)
+	while (bytes_read > 0 || current_line)
 	{
-		if(ft_strchr(buffer, BREAK_LINE))
+		if (ft_strchr(buffer, BREAK_LINE))
 		{
 			current_line = utils_make_line(buffer, current_line);
-			tail = utils_make_tail(buffer, tail);
+			tail = utils_make_tail(buffer, bytes_read);
 			break;
 		}
+		else if (ft_strchr(current_line, BREAK_LINE) && bytes_read <= 0)
+			return (free(buffer), current_line);
+			//tail = utils_get_tail(current_line, tail);
 		else
-			current_line = utils_save_line(current_line, buffer, bytes_read);
+			current_line = utils_save_line(buffer, current_line, bytes_read);
 		if (!utils_read(fd, buffer, &bytes_read) && !current_line)
 			return (free(buffer), NULL);			
 	}
@@ -69,7 +68,7 @@ int main(void)
 		if (line == NULL)
 			break;
 		count++;
-		printf("[%d]:%s\n", count, line);
+		printf("[%d]:%s", count, line);
 		free(line);
 	}
 	return (0);

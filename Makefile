@@ -8,7 +8,7 @@ compile: $(OBJS)
 		cc $(FLAGS) $(SOURCES) -o test
 
 buffer: $(OBJS)
-		cc $(FLAGS) -D BUFFER_SIZE=3 $(SOURCES) -o test
+		cc $(FLAGS) -D BUFFER_SIZE=1  $(SOURCES) -o test
 
 debug: $(OBJS)
 		cc -g $(FLAGS) $(SOURCES) -o test
