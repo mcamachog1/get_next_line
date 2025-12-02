@@ -1,5 +1,5 @@
 #ifndef BUFFER_SIZE
-# define BUFFER_SIZE 42
+# define BUFFER_SIZE 3
 #endif
 
 #ifndef BREAK_LINE
@@ -26,7 +26,7 @@ int	find_nl_index(char *buffer);
 int	ft_strlen(const char *str);
 int	utils_read(int fd, char *buffer, int *bytes_read);
 char	*utils_make_line(char *buffer, char *current);
-void	utils_make_tail(char *buffer, char *next, int bytes_read);
+char	*utils_make_tail(char *buffer, char *next);
 char	*utils_save_line(char *buffer, char *current, int bytes_read);
 void	utils_get_tail(char *current, char *tail);
 void	*ft_memset(void *s, int c, size_t n);

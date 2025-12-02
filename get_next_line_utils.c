@@ -110,20 +110,19 @@ char	*utils_make_line(char *buffer, char *current)
 	sc = ft_strlen(current);
 	while (buffer[sb] != '\n')
 		sb++;
-	size = sb + sc;
+	size = sb + sc + 1;
 	line = (char *)ft_calloc(size + 1, sizeof(char));
 	if (!line)
 		return (NULL);
 	if (ft_strlcat(line, current, sc + 1) >= sizeof(line))
 		return (free(line), NULL);
-	if (ft_strlcat(line, buffer, sb + 1) >= sizeof(line))
+	if (ft_strlcat(line, buffer, size + 1) >= sizeof(line))
 		return (free(line), NULL);
-	line[size] = '\0';
 	free(current);
 	return (line);
 }
 
-char	*utils_save_line(char *buffer, char *current, int bytes_read)
+char	*utils_save_line(char *current, char *buffer, int bytes_read)
 {
 	size_t	sc;
 	size_t	size;
@@ -143,21 +142,28 @@ char	*utils_save_line(char *buffer, char *current, int bytes_read)
 	return (line);
 }
 
-void	utils_make_tail(char *buffer, char *next, int bytes_read)
+char	*utils_make_tail(char *buffer, char *tail)
 {
-	int	i;
-	int	j;
+	size_t	sb;
+	size_t	st;
+	size_t	size;
+	char	*line;
+	char	*temp;
 
-	i = 0;
-	while(buffer[i] != '\n' && i < bytes_read)
-		i++;
-	j = 0;
-	while(j < bytes_read - (i + 1))
-	{
-		next[j] = buffer[j + i];
-		j++;
-	}
-	next[j] = '\0';
+	temp = ft_strchr(buffer, BREAK_LINE);
+	temp++;
+	sb = ft_strlen(temp);
+	st = ft_strlen(tail);
+	size = sb + st;
+	line = (char *)ft_calloc(size + 1, sizeof(char));
+	if (!line)
+		return (NULL);
+	if (ft_strlcat(line, tail, st + 1) >= sizeof(line))
+		return (free(line), NULL);
+	if (ft_strlcat(line, temp, size + 1) >= sizeof(line))
+		return (free(line), NULL);
+	free(tail);
+	return (line);
 }
 
 void	utils_get_tail(char *current, char *tail)
@@ -165,14 +171,18 @@ void	utils_get_tail(char *current, char *tail)
 	int	i;
 	int	last;
 
-	last = ft_strlen(current) - 1;
+	last = 0;
+	if(ft_strlen(current)>0)
+		last = ft_strlen(current) - 1;
 	i = 0;
 	while(tail[i])
 	{
 		current[i + last] = tail[i];
 		i++;
 	}
-	current[i + last] = '\0';	
+	current[i + last] = '\0';
+	free(tail);
+	tail = NULL;
 }
 
 int	ft_strlen(const char *str)

@@ -26,25 +26,28 @@ char *get_next_line(int fd)
 
 	bytes_read = 0;
 	buffer = (char *)ft_calloc(BUFFER_SIZE + 1, sizeof(char));
-	current_line = NULL;
-	tail = NULL;	
 	if (ft_strlen(tail) != 0)
 	{
 		current_line = (char *)ft_calloc(ft_strlen(tail) + 1, sizeof(char));
 		utils_get_tail(current_line, tail);
 	}
+	else
+	{
+		current_line = NULL;
+		tail = NULL;	
+	}
 	if (!utils_read(fd, buffer, &bytes_read))
 		return (free(buffer), NULL);
 	while (bytes_read > 0)
 	{
-		if (ft_strchr(buffer, BREAK_LINE))
+		if(ft_strchr(buffer, BREAK_LINE))
 		{
 			current_line = utils_make_line(buffer, current_line);
-			utils_make_tail(buffer, tail, bytes_read);
+			tail = utils_make_tail(buffer, tail);
 			break;
 		}
 		else
-			current_line = utils_save_line(buffer, current_line, bytes_read);
+			current_line = utils_save_line(current_line, buffer, bytes_read);
 		if (!utils_read(fd, buffer, &bytes_read) && !current_line)
 			return (free(buffer), NULL);			
 	}
