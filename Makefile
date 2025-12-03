@@ -1,4 +1,4 @@
-SOURCES = get_next_line.c get_next_line_utils.c
+SOURCES = get_next_line.c get_next_line_utils.c main.c
 
 OBJS = $(SOURCES:.c=.o)
 
@@ -8,7 +8,7 @@ compile: $(OBJS)
 		cc $(FLAGS) $(SOURCES) -o test
 
 buffer: $(OBJS)
-		cc $(FLAGS) -D BUFFER_SIZE=1  $(SOURCES) -o test
+		cc $(FLAGS)  $(SOURCES) -o test
 
 debug: $(OBJS)
 		cc -g $(FLAGS) $(SOURCES) -o test
