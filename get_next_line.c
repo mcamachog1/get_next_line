@@ -6,7 +6,7 @@
 /*   By: macamach <mcamach@student.42porto.com      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/24 15:48:23 by macamach          #+#    #+#             */
-/*   Updated: 2025/12/03 15:45:21 by macamach         ###   ########.fr       */
+/*   Updated: 2025/12/06 14:32:05 by macamach         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,20 +19,13 @@
 
 int	read_buffer(int fd, char *buffer, int *bytes_read)
 {
-	int	i;
-
-	i = 0;
+	if (fd < 0 || BUFFER_SIZE <= 0)
+		return (0);
 	*bytes_read = read(fd, buffer, BUFFER_SIZE);
 	if ((*bytes_read) <= 0)
 		return (0);
-	if ((*bytes_read) < BUFFER_SIZE + 1)
-	{
-		while ((i + (*bytes_read)) < BUFFER_SIZE)
-		{
-			buffer[i + (*bytes_read)] = '\0';
-			i++;
-		}
-	}
+	if (*bytes_read > 0)
+		buffer[*bytes_read] = '\0';
 	return (1);
 }
 

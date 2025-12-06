@@ -6,7 +6,7 @@
 /*   By: macamach <mcamach@student.42porto.com      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/03 11:43:07 by macamach          #+#    #+#             */
-/*   Updated: 2025/12/03 11:44:59 by macamach         ###   ########.fr       */
+/*   Updated: 2025/12/06 15:04:39 by macamach         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,8 @@ int	main(void)
 	int		count;
 
 	count = 0;
-	fd = open("file.txt", O_RDONLY);
+	fd = 0;
+//	fd = open("file.txt", O_RDONLY);
 	while (1)
 	{
 		line = get_next_line(fd);

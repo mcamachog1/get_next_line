@@ -6,7 +6,7 @@
 /*   By: macamach <mcamach@student.42porto.com      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/24 15:48:53 by macamach          #+#    #+#             */
-/*   Updated: 2025/12/03 14:46:30 by macamach         ###   ########.fr       */
+/*   Updated: 2025/12/06 14:15:03 by macamach         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,6 +95,6 @@ void	*ft_calloc(size_t nmemb, size_t size)
 
 void	free_tail(int bytes_read, char *tail)
 {
-	if (bytes_read == 0 && ft_strlen(tail) == 0)
+	if (bytes_read < BUFFER_SIZE && ft_strlen(tail) == 0)
 		free(tail);
 }
